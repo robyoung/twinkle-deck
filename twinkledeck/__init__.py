@@ -1,4 +1,6 @@
 from pimoroni import Button
+from plasma import plasma2040
+import plasma
 from machine import ADC
 
 import .constants
@@ -20,3 +22,6 @@ button3 = Button(constants.BUTTON3)
 knob1 = TwinkleKnob(constants.KNOB1, 1, 0)
 knob2 = TwinkleKnob(constants.KNOB2, 1, 0)
 knob3 = TwinkleKnob(constants.KNOB3, 1, 0)
+
+lights = plasma.WS2812(constants.NUM_LEDS, 0, 0, plasma2040.DAT)
+lights.start()
