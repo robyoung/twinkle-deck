@@ -1,9 +1,9 @@
 # HSV test
 # ========
 #
-# This example tests out all the buttons and knobs on the interface.
-# The knobs control Hue, Saturation and Value.
-import twinkledeck as td
+# This example tests out all the buttons and dials on the interface.
+# The dials control Hue, Saturation and Value.
+import twinkledeck.hal as td
 import time
 
 ALL_ON = 1 << 2
@@ -17,9 +17,9 @@ prev_sat = None
 prev_val = None
 
 while True:
-    hue = (td.knob1.value / 100) * 360
-    sat = td.knob2.value
-    val = td.knob3.value
+    hue = (td.dial1.value / 100) * 360
+    sat = td.dial2.value
+    val = td.dial3.value
 
     if td.button1.read():
         light_flags = ALL_ON

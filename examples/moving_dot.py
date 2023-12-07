@@ -1,11 +1,11 @@
 # Moving Dot
 # ==========
 #
-# This example tests moving a dot with a knob.
+# This example tests moving a dot with a dial.
 #
-# Knob1 controls the dot position
-# Knob2 controls the size of the skirt
-# Knob3 controls the colour of the dot
+# Dial1 controls the dot position
+# Dial2 controls the size of the skirt
+# Dial3 controls the colour of the dot
 #
 # Button1 pulses the dot bright as one
 # Button2 pulses the dot bright from the middle
@@ -13,7 +13,7 @@
 #
 # Pulsing should take 3 seconds
 # Pulsing should affect the value from 100% to 50%
-import twinkledeck as td
+import twinkledeck.hal as td
 import time
 
 NUM_LEDS = td.constants.NUM_LEDS
@@ -29,7 +29,7 @@ PULSE_START_DIM = 1 << 1
 PULSE_AS_ONE = 1 << 2
 PULSE_FROM_MIDDLE = 1 << 3
 
-prev_knobs = (None, None, None)
+prev_dials = (None, None, None)
 pulsing = False
 pulse_start = None
 
@@ -58,9 +58,9 @@ def calculate_pulse_value(position, values):
 
 
 while True:
-    position = int((td.knob1.value / 100) * NUM_LEDS)
-    size = int((td.knob2.value / 100) * MAX_SKIRT_SIZE)
-    hue = int((td.knob3.value / 100) * 360)
+    position = int((td.dial1.value / 100) * NUM_LEDS)
+    size = int((td.dial2.value / 100) * MAX_SKIRT_SIZE)
+    hue = int((td.dial3.value / 100) * 360)
 
     if td.button1.read():
         pulse = PULSE_START_BRIGHT | PULSE_AS_ONE
@@ -71,7 +71,7 @@ while True:
     else:
         pulse = None
 
-    if pulsing or (position, size, hue) != prev_knobs or pulse is not None:
+    if pulsing or (position, size, hue) != prev_dials or pulse is not None:
         pulse_value = None
         if pulsing:
             pulse_since_start = time.ticks_diff(pulse_start, time.ticks_ms())
@@ -91,6 +91,6 @@ while True:
             else:
                 td.lights.set_hsv(i, 0, 0, 0)
 
-    prev_knobs = (position, size, hue)
+    prev_dials = (position, size, hue)
 
     time.sleep(1.0 / 60)
