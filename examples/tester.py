@@ -3,6 +3,7 @@
 #
 # This example tests out all the buttons and dials on the interface.
 # The dials control Hue, Saturation and Value.
+# The buttons control which lights are on.
 import twinkledeck.hal as td
 import time
 
@@ -17,9 +18,9 @@ prev_sat = None
 prev_val = None
 
 while True:
-    hue = (td.dial1.value / 100) * 360
-    sat = td.dial2.value
-    val = td.dial3.value
+    hue = round(td.dial1.value, 2)
+    sat = round(td.dial2.value, 2)
+    val = round(td.dial3.value, 2)
 
     if td.button1.read():
         light_flags = ALL_ON
