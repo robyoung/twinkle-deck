@@ -16,5 +16,5 @@ dial1 = Dial(ADC(constants.KNOB1), constants.KNOB1_MIN, constants.KNOB1_MAX)
 dial2 = Dial(ADC(constants.KNOB2), constants.KNOB2_MIN, constants.KNOB2_MAX)
 dial3 = Dial(ADC(constants.KNOB3), constants.KNOB3_MIN, constants.KNOB3_MAX)
 
-lights = plasma.WS2812(constants.NUM_LEDS, 0, 0, plasma2040.DAT)
+lights = plasma.WS2812(constants.NUM_LEDS, 0, 0, plasma2040.DAT, rgbw=False, color_order=plasma.COLOR_ORDER_RGB)
 lights.start()
