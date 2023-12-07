@@ -1,9 +1,9 @@
-# HSV test
-# ========
-#
-# This example tests out all the buttons and dials on the interface.
-# The dials control Hue, Saturation and Value.
-# The buttons control which lights are on.
+"""HSV test
+
+This example tests out all the buttons and dials on the interface.
+The dials control Hue, Saturation and Value.
+The buttons control which lights are on.
+"""
 import twinkledeck.hal as td
 import time
 
