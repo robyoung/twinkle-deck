@@ -1,3 +1,9 @@
+"""Hardware Abstraction Layer for TwinkleDeck
+
+This module provides the interface to the TwinkleDeck hardware. Try to
+keep all hardware specific code in this module. This will make it easier
+to test non-hardware specific code.
+"""
 from pimoroni import Button
 from plasma import plasma2040
 import plasma
@@ -5,8 +11,6 @@ from machine import ADC
 
 from twinkledeck import constants
 from twinkledeck.dial import Dial
-
-
 
 button1 = Button(constants.BUTTON1)
 button2 = Button(constants.BUTTON2)
