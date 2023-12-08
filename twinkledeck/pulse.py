@@ -14,12 +14,16 @@ HSV_MIN_VALUE = 0.3
 HSV_DEFAULT_VALUE = 0.6
 
 PULSE_DURATION = 3000
+PULSE_MAX_PERIOD = 1000
 
 class Pulser:
     state = -1
     pulsing = False
     pulse_start = None
 
+    def __init__(self, duration=PULSE_DURATION, max_period=PULSE_MAX_PERIOD):
+        self.duration = duration
+        self.max_period = max_period
 
     def pulse(self, pulse_type):
         if self.pulsing:
@@ -37,7 +41,7 @@ class Pulser:
             return
         self.current_tick = time.ticks_ms()
         self.time_since_start = time.ticks_diff(self.current_tick, self.pulse_start)
-        if self.time_since_start > PULSE_DURATION:
+        if self.time_since_start > self.duration:
             self.pulsing = False
             self.state = -1
             self.pulse_start = None
@@ -49,19 +53,19 @@ class Pulser:
             return HSV_DEFAULT_VALUE
 
         if self.state & PULSE_START_BRIGHT == PULSE_START_BRIGHT:
-            if self.time_since_start < 1000:
+            if self.time_since_start < self.max_period:
                 return HSV_MAX_VALUE
             else:
-                time_available = PULSE_DURATION - 1000
-                time_used = self.time_since_start - 1000
+                time_available = self.duration - self.max_period
+                time_used = self.time_since_start - self.max_period
                 value_range = HSV_MAX_VALUE - HSV_DEFAULT_VALUE
                 return value_range * (time_available - time_used) / time_available + HSV_DEFAULT_VALUE
         else:
-            if self.time_since_start < 1000:
+            if self.time_since_start < self.max_period:
                 return HSV_MIN_VALUE
             else:
-                time_available = PULSE_DURATION - 1000
-                time_used = self.time_since_start - 1000
+                time_available = self.duration - self.max_period
+                time_used = self.time_since_start - self.max_period
                 value_range = HSV_DEFAULT_VALUE - HSV_MIN_VALUE
                 return value_range * time_used / time_available + HSV_MIN_VALUE
 

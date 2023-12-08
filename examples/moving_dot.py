@@ -18,7 +18,7 @@ NUM_LEDS = td.constants.NUM_LEDS
 MAX_SKIRT_SIZE = 5
 
 def main():
-    pulser = Pulser()
+    pulser = Pulser(duration=2000, max_period=300)
     prev_dials = (None, None, None)
     while True:
         position = int(td.dial1.value * NUM_LEDS)
