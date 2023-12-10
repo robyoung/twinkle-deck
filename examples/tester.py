@@ -37,7 +37,7 @@ while True:
         or sat != prev_sat
         or val != prev_val
     ):
-        for i in range(td.constants.NUM_LEDS):
+        for i in range(td.NUM_LEDS):
             if i % 2 == 0 and light_flags & TWOS_OFF:
                 should_show = False
             elif i % 3 == 0 and light_flags & THREES_OFF:

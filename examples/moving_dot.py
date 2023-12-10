@@ -18,7 +18,7 @@ from twinkledeck.pulse import (
 )
 import time
 
-NUM_LEDS = td.constants.NUM_LEDS
+NUM_LEDS = td.NUM_LEDS
 MAX_SKIRT_SIZE = 5
 
 
@@ -46,7 +46,7 @@ def main():
         if (position, skirt_size, hue) != prev_dials or isinstance(
             pulser, (ErraticPulser, RegularPulser)
         ):
-            for i in range(td.constants.NUM_LEDS):
+            for i in range(td.NUM_LEDS):
                 offset = abs(position - i)
                 if offset <= skirt_size:
                     td.lights.set_hsv(i, hue, 1, pulser.value())

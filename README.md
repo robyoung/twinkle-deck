@@ -89,14 +89,14 @@ import twinkledeck.hal as td
 td.dial1.value
 ```
 
-The lights can be individually set to an RGB or HSV value. The number of lights is in `twinkledeck.constants.NUM_LEDS`
+The lights can be individually set to an RGB or HSV value. The number of lights is in `twinkledeck.hal.NUM_LEDS`
 (which is also imported in the HAL).
 
 ```python
 import twinkledeck.hal as td
 
 # set all LEDs red
-for i in range(td.constants.NUM_LEDS):
+for i in range(td.NUM_LEDS):
     td.lights.set_hsv(i, 0, 1, 1)
     td.lights.set_rgb(i, 255, 0, 0)
 ```

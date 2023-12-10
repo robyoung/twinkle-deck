@@ -9,16 +9,37 @@ from plasma import plasma2040
 import plasma
 from machine import ADC
 
-from twinkledeck import constants
 from twinkledeck.dial import Dial
 
-button1 = Button(constants.BUTTON1)
-button2 = Button(constants.BUTTON2)
-button3 = Button(constants.BUTTON3)
+ADC2 = KNOB1 = 28
+ADC1 = KNOB2 = 27
+ADC0 = KNOB3 = 26
 
-dial1 = Dial(ADC(constants.KNOB1), constants.KNOB1_MIN, constants.KNOB1_MAX)
-dial2 = Dial(ADC(constants.KNOB2), constants.KNOB2_MIN, constants.KNOB2_MAX)
-dial3 = Dial(ADC(constants.KNOB3), constants.KNOB3_MIN, constants.KNOB3_MAX)
+KNOB1_MIN = 144
+KNOB1_MAX = 65247
 
-lights = plasma.WS2812(constants.NUM_LEDS, 0, 0, plasma2040.DAT, rgbw=False, color_order=plasma.COLOR_ORDER_RGB)
+KNOB2_MIN = 65359
+KNOB2_MAX = 192
+
+KNOB3_MIN = 65327
+KNOB3_MAX = 176
+
+I2C_SCL = BUTTON1 = 21
+I2C_INT = BUTTON2 = 19
+I2C_SDA = BUTTON3 = 20
+
+NUM_LEDS = 50
+
+
+button1 = Button(BUTTON1)
+button2 = Button(BUTTON2)
+button3 = Button(BUTTON3)
+
+dial1 = Dial(ADC(KNOB1), KNOB1_MIN, KNOB1_MAX)
+dial2 = Dial(ADC(KNOB2), KNOB2_MIN, KNOB2_MAX)
+dial3 = Dial(ADC(KNOB3), KNOB3_MIN, KNOB3_MAX)
+
+lights = plasma.WS2812(
+    NUM_LEDS, 0, 0, plasma2040.DAT, rgbw=False, color_order=plasma.COLOR_ORDER_RGB
+)
 lights.start()
