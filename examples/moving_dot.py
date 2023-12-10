@@ -11,14 +11,19 @@
 # Button2 pulses the dot bright from the middle
 # Button3 pulses the dot dim as one
 import twinkledeck.hal as td
-from twinkledeck.pulse import Pulser, PULSE_START_BRIGHT, PULSE_START_DIM, PULSE_AS_ONE, PULSE_FROM_CENTER
+from twinkledeck.pulse import (
+    ErraticPulser,
+    RegularPulser,
+    FlatPulser,
+)
 import time
 
 NUM_LEDS = td.constants.NUM_LEDS
 MAX_SKIRT_SIZE = 5
 
+
 def main():
-    pulser = Pulser()
+    pulser = FlatPulser(current_value=1.0)
     prev_dials = (None, None, None)
     while True:
         position = int(td.dial1.value * NUM_LEDS)
@@ -26,24 +31,29 @@ def main():
         hue = round(td.dial3.value, 2)
 
         if td.button1.read():
-            pulser.pulse(PULSE_START_BRIGHT | PULSE_AS_ONE)
+            pulser = RegularPulser(
+                current_value=pulser.current_value,
+            )
         elif td.button2.read():
-            pulser.pulse(PULSE_START_BRIGHT | PULSE_FROM_CENTER)
+            pulser = FlatPulser(current_value=1.0)
         elif td.button3.read():
-            pulser.pulse(PULSE_START_DIM | PULSE_AS_ONE)
+            pulser = ErraticPulser(
+                current_value=pulser.current_value,
+            )
 
-        if pulser.pulsing or (position, skirt_size, hue) != prev_dials:
-            pulser.tick()
+        if (position, skirt_size, hue) != prev_dials or isinstance(
+            pulser, (ErraticPulser, RegularPulser)
+        ):
             for i in range(td.constants.NUM_LEDS):
                 offset = abs(position - i)
                 if offset <= skirt_size:
-                    value = pulser.value(offset, skirt_size) 
-                    td.lights.set_hsv(i, hue, 1, value)
+                    td.lights.set_hsv(i, hue, 1, pulser.value())
                 else:
                     td.lights.set_hsv(i, 0, 0, 0)
-            
+
             prev_dials = (position, skirt_size, hue)
 
         time.sleep(1.0 / 60)
+
 
 main()
