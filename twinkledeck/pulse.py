@@ -1,6 +1,3 @@
-from abc import ABCMeta, abstractmethod
-
-
 try:
     import shims.time as time
     import shims.random as random
@@ -21,7 +18,7 @@ HSV_DEFAULT_VALUE = 0.6
 PULSE_DURATION = 1000
 
 
-class BasePulser(metaclass=ABCMeta):
+class BasePulser:
     def __init__(self, current_value=0.0, min_value=0.0, max_value=1.0):
         self._previous_time = time.ticks_ms()
         self._current_value = current_value
@@ -29,18 +26,22 @@ class BasePulser(metaclass=ABCMeta):
         self.max_value = max_value
 
     def _time_diff(self):
-        current_time = time.ticks_ms()
-        time_diff = time.ticks_diff(self._previous_time, current_time)
+        current_time, time_diff = self._raw_time_diff()
         self._previous_time = current_time
+
         return time_diff
+
+    def _raw_time_diff(self):
+        current_time = time.ticks_ms()
+        time_diff = time.ticks_diff(current_time, self._previous_time)
+        return current_time, time_diff
 
     @property
     def current_value(self):
         return self._current_value
 
-    @abstractmethod
     def value(self):
-        ...
+        raise NotImplementedError
 
 
 class FlatPulser(BasePulser):
@@ -98,13 +99,14 @@ class ErraticPulser(BasePulser):
         self.max_duration = max_duration
 
     def value(self):
-        time_diff = self._time_diff()
-        if time_diff < self.min_duration or (
-            time_diff < self.max_duration and random.getrandbits(1) == 0
-        ):
+        current_time, time_diff = self._raw_time_diff()
+        if time_diff < self.min_duration:
             return self._current_value
+        if time_diff < self.max_duration and random.getrandbits(1) & 1 == 0:
+            return self._current_value
+        self._previous_time = current_time
 
-        step = random.randrange(self.min_movement, self.max_value - self.min_value)
+        step = random.uniform(self.min_movement, self.max_value - self.min_value)
 
         new_value = self._current_value + step
         if new_value > self.max_value:

@@ -33,12 +33,14 @@ def main():
         if td.button1.read():
             pulser = RegularPulser(
                 current_value=pulser.current_value,
+                duration=5000,
             )
         elif td.button2.read():
             pulser = FlatPulser(current_value=1.0)
         elif td.button3.read():
             pulser = ErraticPulser(
                 current_value=pulser.current_value,
+                max_duration=5000,
             )
 
         if (position, skirt_size, hue) != prev_dials or isinstance(
