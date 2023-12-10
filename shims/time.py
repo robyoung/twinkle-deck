@@ -1,6 +1,4 @@
+from unittest import mock as _mock
 
-def ticks_ms():
-    ...
-
-def ticks_diff(ticks1, ticks2):
-    return 1.1
+ticks_ms = _mock.MagicMock()
+ticks_diff = _mock.MagicMock(return_value=1.1)

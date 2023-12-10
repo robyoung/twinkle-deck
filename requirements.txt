@@ -1,2 +1,4 @@
 ipython==7.9.0
 rshell==0.0.31
+pytest==6.1.2
+ipdb==0.13.13
