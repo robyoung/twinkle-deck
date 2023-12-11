@@ -109,6 +109,10 @@ def main():
     number = None
     guess = None
 
+    # increase debounce time for buttons
+    td.button1.repeat_time = 800
+    td.button2.repeat_time = 800
+
     while True:
         if td.button3.read():
             _state = STATE_SETTING_MAX_LIGHTS
