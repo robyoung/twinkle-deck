@@ -1,6 +1,11 @@
 RED = (99, 0, 0)
 GREEN = (0, 99, 0)
 BLUE = (0, 0, 99)
+
+BRIGHT_RED = (200, 0, 0)
+BRIGHT_GREEN = (0, 200, 0)
+BRIGHT_BLUE = (0, 0, 200)
+
 ORANGE = (99, 33, 0)
 PURPLE = (99, 0, 99)
 YELLOW = (99, 66, 0)
