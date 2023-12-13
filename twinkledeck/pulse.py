@@ -19,9 +19,9 @@ PULSE_DURATION = 1000
 
 
 class BasePulser:
-    def __init__(self, current_value=0.0, min_value=0.0, max_value=1.0):
+    def __init__(self, min_value=0.0, max_value=1.0, current_value=None):
         self._previous_time = time.ticks_ms()
-        self._current_value = current_value
+        self._current_value = min_value if current_value is None else current_value
         self.min_value = min_value
         self.max_value = max_value
 
@@ -55,12 +55,12 @@ class FlatPulser(BasePulser):
 class RegularPulser(BasePulser):
     def __init__(
         self,
-        current_value=0.0,
         min_value=0.0,
         max_value=1.0,
         duration=PULSE_DURATION,
+        current_value=None,
     ):
-        super().__init__(current_value, min_value, max_value)
+        super().__init__(min_value, max_value, current_value)
         self.duration = duration
         self._direction = 1
 
@@ -86,14 +86,14 @@ class RegularPulser(BasePulser):
 class ErraticPulser(BasePulser):
     def __init__(
         self,
-        current_value=0.0,
         min_value=0.0,
         max_value=1.0,
+        current_value=None,
         min_movement=0.5,
         min_duration=200,
         max_duration=2000,
     ):
-        super().__init__(current_value, min_value, max_value)
+        super().__init__(min_value, max_value, current_value)
         self.min_movement = min_movement
         self.min_duration = min_duration
         self.max_duration = max_duration
