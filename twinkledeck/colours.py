@@ -33,4 +33,4 @@ def rgb_to_hsv(red, green, blue):
     if c_max != 0:
         saturation = delta / c_max
 
-    return hue, saturation, value
+    return hue / 360.0, saturation, value
