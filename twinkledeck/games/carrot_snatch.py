@@ -169,3 +169,9 @@ class Rudolf:
         position = int(self.position * self._max_position)
         lights.set_hsv(position, 0, 1, 0.5)
         lights.set_hsv(position + 1, 0, 1, 0.5)
+
+        for i in range(self.num_carrots):
+            lights.set_rgb(i, *colours.ORANGE)
+        
+        if self.carrot_in_hand:
+            lights.set_rgb(position + 2, *colours.ORANGE)

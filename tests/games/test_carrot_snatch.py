@@ -225,3 +225,33 @@ class TestRudolf:
         ) == (
             0, 1, 0, GAME_STATE_WIN
         )
+
+    def test_carrot_in_hand_is_shown(self, rudolf, dial1, lights):
+        # Given
+        dial1.value = 0.5
+        rudolf.carrot_in_hand = 1
+        rudolf.num_carrots = 0
+        
+        # When
+        rudolf.tick(dial1)
+        rudolf.show(lights)
+
+        # Then
+        lights.set_rgb.assert_called_with(23, *colours.ORANGE)
+
+
+    def test_rudolf_owned_carrots_are_shown(self, rudolf, dial1, lights):
+        # Given
+        dial1.value = 0.5
+        rudolf.carrot_in_hand = 0
+        rudolf.num_carrots = 2
+
+        # When
+        rudolf.tick(dial1)
+        rudolf.show(lights)
+    
+        # Then
+        lights.set_rgb.assert_any_call(0, *colours.ORANGE)
+        lights.set_rgb.assert_any_call(1, *colours.ORANGE)
+
+
