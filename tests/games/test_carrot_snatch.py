@@ -6,10 +6,12 @@ from twinkledeck.games.carrot_snatch import (
     GAME_STATE_PLAY,
     GAME_STATE_WIN,
     SANTA_STATE_ALERT,
+    SANTA_STATE_AWAKE,
     Game,
     Santa,
     Rudolf,
 )
+from shims import time
 
 
 @pytest.fixture
@@ -21,10 +23,19 @@ def td():
 def dial1(td):
     return td.dial1
 
+@pytest.fixture
+def lights(td):
+    return td.lights
+
 
 @pytest.fixture
 def game():
-    return Game(50)
+    return Game(num_leds=50, frame_rate=10)
+
+
+@pytest.fixture
+def rudolf(game):
+    return game.rudolf
 
 
 class TestGame:
@@ -50,23 +61,61 @@ class TestGame:
 class TestSanta:
     @pytest.fixture
     def santa(self, game):
-        return Santa(game)
+        return game.santa
 
     def test_set_state(self, santa):
         santa.set_alert()
         assert santa.state == SANTA_STATE_ALERT
 
+    def test_santa_wakes_up_if_rudolf_is_close_and_fast(self, santa, rudolf):
+        time.ticks_diff.return_value = 1001
+        rudolf.speed = 2
+        rudolf.position = 35
+        santa.tick()
+        assert santa.state == SANTA_STATE_ALERT
+
+
+    def test_state_changes_cannot_happen_too_close_to_each_other(self, santa, rudolf):
+        time.ticks_diff.return_value = 1000
+        rudolf.speed = 2
+        rudolf.position = 35
+        santa.tick()
+        assert santa.state == SANTA_STATE_AWAKE
+
+    def test_noisy_on_an_alert_santa_is_game_over(self, game, santa, rudolf):
+        santa.set_alert()
+        time.ticks_diff.return_value = 1001
+        rudolf.speed = 2
+        rudolf.position = 35
+        santa.tick()
+        assert santa.state == SANTA_STATE_ALERT
+        assert game.state == GAME_STATE_LOSE
+
 
 class TestRudolf:
-    @pytest.fixture
-    def rudolf(self, game):
-        return Rudolf(game)
-
     def test_rudolf_default_speed(self, rudolf):
         assert rudolf.speed == 0
 
-    def test_calculate_rudolf_speed(self, rudolf, dial1):
-        # TODO @robyoung calculate speed in terms of ticks
-        # TODO @robyoung calculate a very slow ewma
+    def test_rudolf_speed_drops_over_time(self, game, rudolf, dial1):
+        dial1.value = 1
+        for _ in range(game.frame_rate * 2):
+            rudolf.tick(dial1)
+        assert rudolf.speed == pytest.approx(0.135, abs=0.001)
+
+    def test_rudolf_is_two_red_lights(self, rudolf, lights, dial1):
+        dial1.value = 0
+        rudolf.tick(dial1)
+        rudolf.show(lights)
+        assert lights.set_hsv.call_args_list == [
+            ((0, 0, 1, 0.5),),
+            ((1, 0, 1, 0.5),),
+        ]
+
+    def test_rudolf_max_position_is_before_santa(self, rudolf, lights, dial1):
         dial1.value = 1
         rudolf.tick(dial1)
+        rudolf.show(lights)
+        assert lights.set_hsv.call_args_list == [
+            ((45, 0, 1, 0.5),),
+            ((46, 0, 1, 0.5),),
+        ]
