@@ -19,7 +19,6 @@ class Game:
         self.num_leds = num_leds
         self.santa = Santa(self)
         self.rudolf = Rudolf(self)
-        self.carrots = [Carrot(num_leds - self.santa.size - (i + 1)) for i in range(3)]
         self.frame_rate = frame_rate
 
     def tick(self, td):
@@ -38,6 +37,9 @@ class Game:
         if self.state != GAME_STATE_PLAY:
             # fall back to displaying outcome
             return
+
+        self.santa.show(lights)
+        self.rudolf.show(lights)
 
     def tick_outcome(self, lights, button1):
         if self.state != self.state_prev:
@@ -62,6 +64,7 @@ class Santa:
 
     def __init__(self, game):
         self.game = game
+        self.num_carrots = 3
         self.set_awake()
 
     def set_awake(self):
@@ -98,17 +101,13 @@ class Santa:
 
     def show(self, lights):
         value = self.pulser.value()
+        # show santa
         lights.set_hsv(47, 0, 1, value)  # santa
         lights.set_hsv(48, 0, 1, value)  # santa
         lights.set_hsv(49, 0, 0, 0.5)  # hat
-
-
-class Carrot:
-    def __init__(self, position):
-        self.position = position
-
-    def show(self, lights):
-        lights.set_hsv(self.position)
+        # show santa's carrots
+        for i in range(self.num_carrots):
+            lights.set_rgb(46 - i, *colours.ORANGE)
 
 
 class Rudolf:
@@ -119,6 +118,8 @@ class Rudolf:
         self.position = 0
         self.speed = 0
         self.speed_reduction = speed_reduction
+        self.num_carrots = 0
+        self.carrot_in_hand = 0
 
     @property
     def is_close(self):
@@ -150,7 +151,21 @@ class Rudolf:
         self.speed = speed + self.speed * self.speed_reduction
         self.position = new_position
 
+        if self.carrot_in_hand == 0 and self.position > 0.9:
+            self.carrot_in_hand = 1
+            self.game.santa.num_carrots -= 1
+
+        if self.carrot_in_hand == 1 and self.position < 0.1:
+            self.carrot_in_hand = 0
+            self.num_carrots += 1
+            if self.game.santa.num_carrots == 0:
+                self.game.state = GAME_STATE_WIN
+
+    @property
+    def _max_position(self):
+        return self.game.num_leds - self.game.santa.size - self.size - self.game.santa.num_carrots
+
     def show(self, lights):
-        position = int(self.position * (self.game.num_leds - self.game.santa.size - self.size))
+        position = int(self.position * self._max_position)
         lights.set_hsv(position, 0, 1, 0.5)
         lights.set_hsv(position + 1, 0, 1, 0.5)
